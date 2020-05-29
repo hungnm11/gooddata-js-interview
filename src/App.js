@@ -77,8 +77,9 @@ class App extends Component {
     if (mm < 10) {
       mm = "0" + mm;
     }
-    today = yyyy + "-" + mm + "-" + dd;
-    return today;
+    [yyyy, mm, dd].join('-');
+    // today = yyyy + "-" + mm + "-" + dd;
+    return [yyyy, mm, dd].join('-');;
   }
 
   onHandleYears(e) {
