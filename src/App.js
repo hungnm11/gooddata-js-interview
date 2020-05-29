@@ -6,22 +6,23 @@ import "@gooddata/react-components/styles/css/main.css";
 import { ColumnChart } from "@gooddata/react-components";
 
 const grossProfitMeasure = "/gdc/md/xms7ga4tf3g3nzucd8380o2bev8oeknp/obj/6877";
-const dateAttributeInMonths =
-  "/gdc/md/xms7ga4tf3g3nzucd8380o2bev8oeknp/obj/2142";
+// const dateAttributeInMonths = "/gdc/md/xms7ga4tf3g3nzucd8380o2bev8oeknp/obj/2142";
+const dateAttributeInYears =
+  "/gdc/md/xms7ga4tf3g3nzucd8380o2bev8oeknp/obj/2005";
 const dateAttribute = "/gdc/md/xms7ga4tf3g3nzucd8380o2bev8oeknp/obj/2180";
 
 class App extends Component {
   constructor() {
     super();
 
-    this.onHandleMonths = this.onHandleMonths.bind(this);
+    this.onHandleYears = this.onHandleYears.bind(this);
 
     this.state = {
       firstDay: "2016-01-01",
       lastDay: "2016-12-31",
     };
   }
-  getMonthFilter() {
+  getYearFilter() {
     const { firstDay, lastDay } = this.state;
     return {
       absoluteDateFilter: {
@@ -56,19 +57,19 @@ class App extends Component {
     return {
       visualizationAttribute: {
         displayForm: {
-          uri: dateAttributeInMonths,
+          uri: dateAttributeInYears,
         },
         localIdentifier: "a1",
       },
     };
   }
 
-  formatDate(y, m, d) {
-    let today = new Date(y, m, d);
+  formatDate(ddd) {
+    let today = new Date(ddd);
     let dd = today.getDate();
 
     let mm = today.getMonth() + 1;
-    const yyyy = 2016;
+    const yyyy = today.getFullYear();
     if (dd < 10) {
       dd = "0" + dd;
     }
@@ -80,37 +81,50 @@ class App extends Component {
     return today;
   }
 
-  onHandleMonths(e) {
-    console.log(parseInt(e.target.value) + 1);
-    const firstDay = this.formatDate(2016, parseInt(e.target.value), 1);
-    const lastDay = this.formatDate(2016, parseInt(e.target.value) + 1, 0);
-    console.log("FirstDay: ", firstDay, "LastDay :", lastDay);
+  onHandleYears(e) {
+    const lastDayOfYear = new Date(
+      new Date(parseInt(e.target.value), 1, 1).getFullYear(),
+      11,
+      31
+    );
     this.setState({
-      firstDay,
-      lastDay,
+      firstDay: parseInt(e.target.value) + "-1-1",
+      lastDay: this.formatDate(lastDayOfYear),
     });
   }
 
+  //   onHandleMonths(e) {
+  //     console.log(parseInt(e.target.value) + 1);
+  //     const firstDay = this.formatDate(2016, parseInt(e.target.value), 1);
+  //     const lastDay = this.formatDate(2016, parseInt(e.target.value) + 1, 0);
+  //     console.log("FirstDay: ", firstDay, "LastDay :", lastDay);
+  //     this.setState({
+  //       firstDay,
+  //       lastDay,
+  //     });
+  //   }
+
   renderDropdown() {
-    const months = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
+    const years = ["2015", "2016", "2017"];
+    // const months = [
+    //   "January",
+    //   "February",
+    //   "March",
+    //   "April",
+    //   "May",
+    //   "June",
+    //   "July",
+    //   "August",
+    //   "September",
+    //   "October",
+    //   "November",
+    //   "December",
+    // ];
     return (
-      <select defaultValue="1" onChange={this.onHandleMonths}>
-        {months.map((mon, i) => (
-          <option key={i} value={i}>
-            {mon}
+      <select defaultValue="2016" onChange={this.onHandleYears}>
+        {years.map((yrs, i) => (
+          <option key={i} value={yrs}>
+            {yrs}
           </option>
         ))}
         ;
@@ -120,13 +134,14 @@ class App extends Component {
 
   render() {
     const projectId = "xms7ga4tf3g3nzucd8380o2bev8oeknp";
-    const filters = [this.getMonthFilter()];
+    const filters = [this.getYearFilter()];
+    // const filters = [this.getMonthFilter()];
     const measures = this.getMeasures();
     const viewBy = this.getViewBy();
-    console.log('viewBy ==>', viewBy)
     return (
       <div className="App">
-        <h1>$ Gross Profit in month {this.renderDropdown()} 2016</h1>
+        <h1>$ Gross Profit in Year {this.renderDropdown()}</h1>
+        {/* <h1>$ Gross Profit in month {this.renderDropdown()} 2016</h1> */}
         <div>
           <ColumnChart
             measures={measures}
@@ -134,7 +149,8 @@ class App extends Component {
             projectId={projectId}
           />
         </div>
-        <h1>$ Gross Profit - All months</h1>
+        <h1>$ Gross Profit - All years</h1>
+        {/* <h1>$ Gross Profit - All months</h1> */}
         <div>
           <ColumnChart
             measures={measures}
